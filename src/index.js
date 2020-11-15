@@ -14,15 +14,11 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
       if (playState == 1) {
         obj.play.setAttribute("src", "play.png");
         playState = 0;
-        if (index == 0) {
-          songs[0].pauseSong();
-        }
+        songs[index].pauseSong();
       } else {
         obj.play.setAttribute("src", "pause.png");
         playState = 1;
-        if (index == 0) {
-          songs[0].playSong();
-        }
+        songs[index].playSong();
       }
     });
 
@@ -33,9 +29,11 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
       } else {
         index = 0;
       }
-      if (playState == 0) {
+      if (playState == 1) {
         songs[index].playSong();
       }
+      let cover = document.getElementById("coverart");
+      cover.setAttribute("src", "cover" + index + ".jpg");
     });
     obj.prev.addEventListener("click", function () {
       songs[index].pauseSong();
@@ -44,9 +42,11 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
       } else {
         index = 2;
       }
-      if (playState == 0) {
+      if (playState == 1) {
         songs[index].playSong();
       }
+      let cover = document.getElementById("coverart");
+      cover.setAttribute("src", "cover" + index + ".jpg");
     });
   };
 }
@@ -64,7 +64,9 @@ function Song(file, name, artist, index) {
   this.indexNumber = index;
 }
 
-let song1 = new Song("song1.mp3", "All That", "Benjamin Tissot", 0);
+let song0 = new Song("song0.mp3", "All That", "Benjamin Tissot", 0);
+let song1 = new Song("song1.mp3", "Indigo Sun", "Daniel Birch", 1);
+let song2 = new Song("song2.mp3", "Alright Okay", "Mild Wild", 2);
 
-let buttons = new Buttons("play", "next", "prev", song1);
+let buttons = new Buttons("play", "next", "prev", song0, song1, song2);
 buttons.initialize();
