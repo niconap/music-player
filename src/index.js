@@ -1,6 +1,7 @@
 import css from "./style.css";
 
 let index = 0;
+let currentInterval = "";
 
 function Buttons(playButton, nextButton, prevButton, ...songs) {
   this.next = document.getElementById(nextButton);
@@ -15,10 +16,12 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
         obj.play.setAttribute("src", "play.png");
         playState = 0;
         songs[index].pauseSong();
+        clearInterval(currentInterval);
       } else {
         obj.play.setAttribute("src", "pause.png");
         playState = 1;
         songs[index].playSong();
+        currentInterval = setInterval(songs[index].updateTime, 1000);
       }
     });
 
@@ -53,7 +56,7 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
   };
 }
 
-function Song(file, name, artist, index) {
+function Song(file, name, artist, length) {
   this.audio = new Audio(file);
   this.playSong = function () {
     this.audio.play();
@@ -63,7 +66,7 @@ function Song(file, name, artist, index) {
   };
   this.songName = name;
   this.artistName = artist;
-  this.indexNumber = index;
+  this.songLength = length;
   let obj = this;
 
   this.render = function () {
@@ -71,12 +74,42 @@ function Song(file, name, artist, index) {
     songElement.innerHTML = obj.songName;
     let artistElement = document.getElementById("artist");
     artistElement.innerHTML = obj.artistName;
+    let totalTime = document.getElementById("total");
+    totalTime.innerHTML = obj.songLength;
+    let time = document.getElementById("current");
+    time.innerHTML = "0:00";
+  };
+
+  this.updateTime = function () {
+    let time = document.getElementById("current");
+    let current = time.innerHTML;
+    let split = current.split("");
+    split = split.filter((element) => {
+      if (element == ":") {
+        return false;
+      } else {
+        return true;
+      }
+    });
+    if (split[2] != 9) {
+      split[2]++;
+    } else if (split[1] != 5) {
+      split[1]++;
+      split[2] = "0";
+    } else {
+      split[0]++;
+      split[1] = "0";
+      split[2] = "0";
+    }
+    split.splice(1, 0, ":");
+    split = split.join("");
+    time.innerHTML = split;
   };
 }
 
-let song0 = new Song("song0.mp3", "All That", "Benjamin Tissot", 0);
-let song1 = new Song("song1.mp3", "Indigo Sun", "Daniel Birch", 1);
-let song2 = new Song("song2.mp3", "Alright Okay", "Mild Wild", 2);
+let song0 = new Song("song0.mp3", "All That", "Benjamin Tissot", "2:25");
+let song1 = new Song("song1.mp3", "Indigo Sun", "Daniel Birch", "4:52");
+let song2 = new Song("song2.mp3", "Alright Okay", "Mild Wild", "2:53");
 
 let buttons = new Buttons("play", "next", "prev", song0, song1, song2);
 buttons.initialize();
