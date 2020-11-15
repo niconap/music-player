@@ -32,6 +32,7 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
       if (playState == 1) {
         songs[index].playSong();
       }
+      songs[index].render();
       let cover = document.getElementById("coverart");
       cover.setAttribute("src", "cover" + index + ".jpg");
     });
@@ -45,6 +46,7 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
       if (playState == 1) {
         songs[index].playSong();
       }
+      songs[index].render();
       let cover = document.getElementById("coverart");
       cover.setAttribute("src", "cover" + index + ".jpg");
     });
@@ -62,6 +64,14 @@ function Song(file, name, artist, index) {
   this.songName = name;
   this.artistName = artist;
   this.indexNumber = index;
+  let obj = this;
+
+  this.render = function () {
+    let songElement = document.getElementById("song");
+    songElement.innerHTML = obj.songName;
+    let artistElement = document.getElementById("artist");
+    artistElement.innerHTML = obj.artistName;
+  };
 }
 
 let song0 = new Song("song0.mp3", "All That", "Benjamin Tissot", 0);
