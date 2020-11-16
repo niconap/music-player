@@ -27,6 +27,7 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
 
     obj.next.addEventListener("click", function () {
       songs[index].pauseSong();
+      clearInterval(currentInterval);
       songs[index].audio.currentTime = 0;
       if (index != 2) {
         index++;
@@ -39,9 +40,11 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
       songs[index].render();
       let cover = document.getElementById("coverart");
       cover.setAttribute("src", "cover" + index + ".jpg");
+      currentInterval = setInterval(songs[index].updateTime, 1000);
     });
     obj.prev.addEventListener("click", function () {
       songs[index].pauseSong();
+      clearInterval(currentInterval);
       songs[index].audio.currentTime = 0;
       if (index != 0) {
         index--;
@@ -54,6 +57,7 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
       songs[index].render();
       let cover = document.getElementById("coverart");
       cover.setAttribute("src", "cover" + index + ".jpg");
+      currentInterval = setInterval(songs[index].updateTime, 1000);
     });
   };
 }
