@@ -27,6 +27,7 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
 
     obj.next.addEventListener("click", function () {
       songs[index].pauseSong();
+      songs[index].audio.currentTime = 0;
       if (index != 2) {
         index++;
       } else {
@@ -41,6 +42,7 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
     });
     obj.prev.addEventListener("click", function () {
       songs[index].pauseSong();
+      songs[index].audio.currentTime = 0;
       if (index != 0) {
         index--;
       } else {
@@ -57,6 +59,7 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
 }
 
 function Song(file, name, artist, length) {
+  let obj = this;
   this.audio = new Audio(file);
   this.playSong = function () {
     this.audio.play();
@@ -67,9 +70,28 @@ function Song(file, name, artist, length) {
   this.songName = name;
   this.artistName = artist;
   this.songLength = length;
-  let obj = this;
+  this.slider = document.getElementById("timebar");
+  this.slider.addEventListener("change", function () {
+    let position = obj.audio.duration * (obj.slider.value / 100);
+    obj.audio.currentTime = position;
+    let totalSeconds = Math.round(position);
+    let minutes = Math.floor(totalSeconds / 60);
+    let seconds = "";
+    if (minutes != 0) {
+      seconds = totalSeconds - 60 * minutes;
+    } else {
+      seconds = totalSeconds;
+    }
+    if (seconds < 10) {
+      seconds = "0" + seconds;
+    }
+    let time = document.getElementById("current");
+    let newTime = minutes + ":" + seconds;
+    time.innerHTML = newTime.toString();
+  });
 
   this.render = function () {
+    obj.slider.value = 0;
     let songElement = document.getElementById("song");
     songElement.innerHTML = obj.songName;
     let artistElement = document.getElementById("artist");
@@ -104,10 +126,20 @@ function Song(file, name, artist, length) {
     split.splice(1, 0, ":");
     split = split.join("");
     time.innerHTML = split;
+    obj.sliderUpdate();
+  };
+
+  this.sliderUpdate = function () {
+    let position = 0;
+
+    if (!isNaN(obj.audio.duration)) {
+      position = obj.audio.currentTime * (100 / obj.audio.duration);
+      obj.slider.value = position;
+    }
   };
 }
 
-let song0 = new Song("song0.mp3", "All That", "Benjamin Tissot", "2:25");
+let song0 = new Song("song0.mp3", "All That", "Benjamin Tissot", "2:52");
 let song1 = new Song("song1.mp3", "Indigo Sun", "Daniel Birch", "4:52");
 let song2 = new Song("song2.mp3", "Alright Okay", "Mild Wild", "2:53");
 
