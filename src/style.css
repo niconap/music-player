@@ -39,6 +39,12 @@
   margin-right: 15px;
 }
 
+#play:hover,
+#next:hover,
+#prev:hover {
+  cursor: pointer;
+}
+
 .time {
   display: inline-block;
   margin: 10px;
