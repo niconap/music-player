@@ -104,6 +104,7 @@ function Song(file, name, artist, length) {
 
   this.updateTime = function () {
     let time = document.getElementById("current");
+    let total = document.getElementById("total");
     let current = time.innerHTML;
     let split = current.split("");
     split = split.filter((element) => {
@@ -127,6 +128,12 @@ function Song(file, name, artist, length) {
     split = split.join("");
     time.innerHTML = split;
     obj.sliderUpdate();
+    if (time.innerHTML == total.innerHTML) {
+      obj.pauseSong();
+      clearInterval(currentInterval);
+      obj.slider.value = 0;
+      time.innerHTML = "0:00";
+    }
   };
 
   this.sliderUpdate = function () {
@@ -142,6 +149,8 @@ function Song(file, name, artist, length) {
 let song0 = new Song("song0.mp3", "All That", "Benjamin Tissot", "2:52");
 let song1 = new Song("song1.mp3", "Indigo Sun", "Daniel Birch", "4:52");
 let song2 = new Song("song2.mp3", "Alright Okay", "Mild Wild", "2:53");
+
+console.log(song1.audio.duration);
 
 let buttons = new Buttons("play", "next", "prev", song0, song1, song2);
 buttons.initialize();
