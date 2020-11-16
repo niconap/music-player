@@ -2,6 +2,7 @@ import css from "./style.css";
 
 let index = 0;
 let currentInterval = "";
+let playState = 0;
 
 function Buttons(playButton, nextButton, prevButton, ...songs) {
   this.next = document.getElementById(nextButton);
@@ -10,7 +11,6 @@ function Buttons(playButton, nextButton, prevButton, ...songs) {
   let obj = this;
 
   this.initialize = function () {
-    let playState = 0;
     obj.play.addEventListener("click", function () {
       if (playState == 1) {
         obj.play.setAttribute("src", "play.png");
@@ -74,23 +74,10 @@ function Song(file, name, artist, length) {
   this.slider.addEventListener("change", function () {
     let position = obj.audio.duration * (obj.slider.value / 100);
     obj.audio.currentTime = position;
-    let totalSeconds = Math.round(position);
-    let minutes = Math.floor(totalSeconds / 60);
-    let seconds = "";
-    if (minutes != 0) {
-      seconds = totalSeconds - 60 * minutes;
-    } else {
-      seconds = totalSeconds;
-    }
-    if (seconds < 10) {
-      seconds = "0" + seconds;
-    }
-    let time = document.getElementById("current");
-    let newTime = minutes + ":" + seconds;
-    time.innerHTML = newTime.toString();
   });
 
   this.render = function () {
+    obj.audio.currentTime = 0;
     obj.slider.value = 0;
     let songElement = document.getElementById("song");
     songElement.innerHTML = obj.songName;
@@ -103,36 +90,27 @@ function Song(file, name, artist, length) {
   };
 
   this.updateTime = function () {
-    let time = document.getElementById("current");
-    let total = document.getElementById("total");
-    let current = time.innerHTML;
-    let split = current.split("");
-    split = split.filter((element) => {
-      if (element == ":") {
-        return false;
-      } else {
-        return true;
-      }
-    });
-    if (split[2] != 9) {
-      split[2]++;
-    } else if (split[1] != 5) {
-      split[1]++;
-      split[2] = "0";
+    let totalSeconds = Math.floor(obj.audio.currentTime);
+    let minutes = Math.floor(totalSeconds / 60);
+    let seconds = "";
+    if (minutes != 0) {
+      seconds = totalSeconds - 60 * minutes;
     } else {
-      split[0]++;
-      split[1] = "0";
-      split[2] = "0";
+      seconds = totalSeconds;
     }
-    split.splice(1, 0, ":");
-    split = split.join("");
-    time.innerHTML = split;
+    if (seconds < 10) {
+      seconds = "0" + seconds;
+    }
+    let timeElement = document.getElementById("current");
+    let newTime = minutes + ":" + seconds;
+    timeElement.innerHTML = newTime.toString();
     obj.sliderUpdate();
-    if (time.innerHTML == total.innerHTML) {
+    if (timeElement.innerHTML == total.innerHTML) {
       obj.pauseSong();
       clearInterval(currentInterval);
       obj.slider.value = 0;
-      time.innerHTML = "0:00";
+      timeElement.innerHTML = "0:00";
+      resetPlayButton();
     }
   };
 
@@ -146,11 +124,15 @@ function Song(file, name, artist, length) {
   };
 }
 
-let song0 = new Song("song0.mp3", "All That", "Benjamin Tissot", "2:52");
+let song0 = new Song("song0.mp3", "All That", "Benjamin Tissot", "2:25");
 let song1 = new Song("song1.mp3", "Indigo Sun", "Daniel Birch", "4:52");
 let song2 = new Song("song2.mp3", "Alright Okay", "Mild Wild", "2:53");
 
-console.log(song1.audio.duration);
-
 let buttons = new Buttons("play", "next", "prev", song0, song1, song2);
 buttons.initialize();
+
+function resetPlayButton() {
+  let play = document.getElementById("play");
+  play.setAttribute("src", "play.png");
+  playState = 0;
+}
